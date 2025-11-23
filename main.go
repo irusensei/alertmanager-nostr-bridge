@@ -2,12 +2,13 @@ package main
 
 import (
 	"log"
+	"fmt"
+	"net/http"
 )
 
 func main() {
 	cfg := LoadConfig()
-	log.Printf("Port: %s", cfg.Port)
-	log.Printf("Nsec: %s", cfg.NSec)
-	log.Printf("Npub: %s", cfg.NPub)
-	log.Printf("Relays: %s", cfg.Relays)
+	http.HandleFunc("/", cfg.alertReceiver)
+	log.Printf("Server starting on http://localhost:%d", cfg.Port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), nil))
 }

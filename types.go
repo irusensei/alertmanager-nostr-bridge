@@ -1,10 +1,5 @@
 package main
 
-import (
-	"encoding/json"
-	"fmt"
-	"os"
-)
 
 type Alert struct {
 	Status       string         `json:"status"`
@@ -26,30 +21,15 @@ type Payload struct {
 	Receiver          string         `json:"receiver"`
 	Status            string         `json:"firing"`
 	ExternalURL       string         `json:"externalURL"`
-	Version           string            `json:"version"`
+	Version           string         `json:"version"`
 	GroupKey          string         `json:"groupKey"`
 	TruncatedAlerts   int            `json:"truncatedAlerts"`
 	OrgID             int            `json:"orgId"`
 	Title             string         `json:"title"`
 	State             string         `json"state"`
 	Message           string         `json:"message"`
-	Alerts            []Alert          `json:"alerts"`
+	Alerts            []Alert        `json:"alerts"`
 	GroupLabels       map[string]any `json:"groupLabels"`
 	CommonLabels      map[string]any `json:"groupLabels"`
 	CommonAnnotations map[string]any `json:"commonAnnotations"`
-}
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-func main() {
-	data, err := os.ReadFile("./alert.json")
-	check(err)
-	var payload Payload
-	p1 := json.Unmarshal([]byte(data), &payload)
-	check(p1)
-	fmt.Printf("Full payload: %+v\n", payload)
 }

@@ -13,10 +13,11 @@ import (
 )
 
 type Config struct {
-	Port   int
-	NSec   string
-	NPub   string
-	Relays []string
+	Port      int
+	NSec      string
+	SecretKey nostr.SecretKey
+	NPub      string
+	Relays    []string
 }
 
 func check(e error) {
@@ -66,11 +67,12 @@ func LoadConfig() *Config {
 		if prefix != "nsec" {
 			log.Fatalf("not an nsec, got %s", prefix)
 		}
-		
+
 		pk := nostr.GetPublicKey(sk)
 		npub := nip19.EncodeNpub(pk)
 		log.Printf("Loading private key from file %s. Will send alerts from %s", nsecfile, npub)
 		config.NSec = nsec
+		config.SecretKey = sk
 	} else {
 		sk := nostr.Generate()
 		pk := nostr.GetPublicKey(sk)
@@ -78,6 +80,7 @@ func LoadConfig() *Config {
 		npub := nip19.EncodeNpub(pk)
 		log.Printf("Using random private key. Will send alerts from %s", npub)
 		config.NSec = nsec
+		config.SecretKey = sk
 	}
 
 	npub, ok := os.LookupEnv("NOSTR_NPUB")
@@ -90,6 +93,8 @@ func LoadConfig() *Config {
 	relays, ok := os.LookupEnv("NOSTR_RELAYS")
 	if ok {
 		config.Relays = strings.Split(relays, ",")
+	} else {
+		config.Relays = strings.Split(relayargs, ",")
 	}
 	return &config
 }
